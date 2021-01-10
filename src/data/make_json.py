@@ -38,5 +38,5 @@ for key, value in data.items():
 
 result = {'nodes': nodes, 'edges': edges}
 
-with open('./public/data.json', 'w') as f:
+with open('./graph.json', 'w') as f:
   json.dump(result, f)
