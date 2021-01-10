@@ -1,35 +1,37 @@
-import React from "react";
-import {
-  Sigma,
-  LoadJSON,
-  ForceAtlas2,
-  RandomizeNodePositions,
-  RelativeSize,
-} from "react-sigma";
+import React, { useRef, useEffect } from "react";
+
+import { WebGLRenderer } from "sigma";
+import { DirectedGraph } from "graphology";
+import randomLayout from "graphology-layout/random";
+
+import graphData from "./data/graph.json";
 
 function App() {
-  const height = document.body.clientHeight;
+  const containerRef = useRef<HTMLDivElement>(null);
 
+  const graph = new DirectedGraph();
+  for (const node of graphData.nodes) {
+    console.log(node.id);
+    graph.addNode(node.id, { label: node.label });
+  }
+
+  for (const edge of graphData.edges) {
+    try {
+      graph.addEdge(edge.source, edge.target);
+    } catch (e: any) {
+      continue;
+    }
+  }
+
+  useEffect(() => {
+    randomLayout.assign(graph);
+    const renderer = new WebGLRenderer(graph, containerRef.current);
+  });
+
+  const height = document.body.clientHeight / 2;
   return (
     <div>
-      <Sigma
-        style={{ height }}
-        renderer="canvas"
-        settings={{
-          drawEdges: true,
-          clone: false,
-          defaultEdgeColor: "rgba(0, 0, 0, 0.1)",
-          edgeColor: "default",
-          defaultEdgeType: "arrow",
-          minArrowSize: 5,
-        }}
-      >
-        <LoadJSON path="/data.json">
-          <RelativeSize initialSize={100} />
-          <RandomizeNodePositions />
-          <ForceAtlas2 />
-        </LoadJSON>
-      </Sigma>
+      <div ref={containerRef} id="container" style={{ height }} />
     </div>
   );
 }
