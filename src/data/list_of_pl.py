@@ -28,7 +28,6 @@ def get_languages(soup, regex):
                and "#" not in href
 
     box = soup.find(text=regex)
-    links = None
 
     if box is not None:
       links = box.find_next("tr").findChildren("a")
@@ -38,7 +37,6 @@ def get_languages(soup, regex):
 
 def get_property(soup, regex):
     box = soup.find(text=regex)
-    links = None
 
     if box is not None:
       links = box.find_next("td").findChildren("a")
@@ -48,7 +46,6 @@ def get_property(soup, regex):
 
 def get_text(soup, regex):
     box = soup.find(text=regex)
-    links = None
 
     if box is not None:
       content = box.find_next("td").text
@@ -58,12 +55,18 @@ def get_text(soup, regex):
 
 def get_bday(soup):
     box = soup.find("span", {"class": "bday"})
-    links = None
 
     if box is not None:
       return box.text
 
     return None
+
+def get_website(soup):
+    box = soup.find(text="Website")
+
+    if box is not None:
+      link = box.find_next("td").find("a")
+      return link['href']
 
 if __name__ == "__main__":
   html = requests.get("https://en.wikipedia.org/wiki/List_of_programming_languages").text
@@ -93,6 +96,7 @@ if __name__ == "__main__":
       family = None
       typing = None
       appeared = None
+      website = None
 
       if soup is not None:
         inf_by = get_languages(soup, inf_by_regex)
@@ -105,9 +109,10 @@ if __name__ == "__main__":
 
         typing = get_text(soup, "Typing discipline")
         appeared = get_bday(soup)
+        website = get_website(soup)
 
-      result[page_id] = Language(title, inf_by, inf_to, paradigm, family, typing, appeared)
-      print(result[page_id].typing)
+      result[page_id] = Language(title, inf_by, inf_to, paradigm, family, typing, appeared, website)
+      print(result[page_id].website)
 
     with open('src/data/pl.pkl', 'wb') as f:
       pickle.dump(result, f)
