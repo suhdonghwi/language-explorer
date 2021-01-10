@@ -1,8 +1,6 @@
 import React from "react";
 import {
   Sigma,
-  SigmaEnableWebGL,
-  ForceAtlas2,
   LoadJSON,
   RandomizeNodePositions,
   RelativeSize,
