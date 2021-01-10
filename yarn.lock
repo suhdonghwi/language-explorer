@@ -5323,6 +5323,13 @@ graphology-indices@^0.13.3:
     graphology-utils "^1.7.0"
     mnemonist "^0.38.0"
 
+graphology-layout-forceatlas2@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/graphology-layout-forceatlas2/-/graphology-layout-forceatlas2-0.6.0.tgz#0329c14ccd037be3896ee1409831e8884cee8e8f"
+  integrity sha512-gJ7tOYtMVEMuQQgsTnAExJ7eJf2+Ry2SrPCuh6ZHyM00iqx7jf7fH9j3aX2heShAM3tIl/+yH6MNaSYLoJBATw==
+  dependencies:
+    graphology-utils "^1.8.0"
+
 graphology-layout@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/graphology-layout/-/graphology-layout-0.4.0.tgz#2e9049b92a64a8de6f140a52e9c734a443fa5d8e"
