@@ -93,7 +93,6 @@ if __name__ == "__main__":
       inf_by = None
       inf_to = None
       paradigm = None
-      family = None
       typing = None
       appeared = None
       website = None
@@ -102,16 +101,11 @@ if __name__ == "__main__":
         inf_by = get_languages(soup, inf_by_regex)
         inf_to = get_languages(soup, inf_to_regex)
         paradigm = get_property(soup, "Paradigm")
-
-        family = get_property(soup, "Family")
-        if family is not None:
-          family = list(map(get_id, family))
-
         typing = get_text(soup, "Typing discipline")
         appeared = get_bday(soup)
         website = get_website(soup)
 
-      result[page_id] = Language(title, inf_by, inf_to, paradigm, family, typing, appeared, website)
+      result[page_id] = Language(title, inf_by, inf_to, paradigm, typing, appeared, website)
       print(result[page_id].website)
 
     with open('src/data/pl.pkl', 'wb') as f:
