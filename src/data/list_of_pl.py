@@ -46,6 +46,16 @@ def get_property(soup, regex):
 
     return None
 
+def get_text(soup, regex):
+    box = soup.find(text=regex)
+    links = None
+
+    if box is not None:
+      content = box.find_next("td").text
+      return list(map(lambda s: s.lower().strip(), content.split(",")))
+
+    return None
+
 def get_bday(soup):
     box = soup.find("span", {"class": "bday"})
     links = None
@@ -93,10 +103,11 @@ if __name__ == "__main__":
         if family is not None:
           family = list(map(get_id, family))
 
-        typing = get_property(soup, "Typing discipline")
+        typing = get_text(soup, "Typing discipline")
         appeared = get_bday(soup)
 
       result[page_id] = Language(title, inf_by, inf_to, paradigm, family, typing, appeared)
+      print(result[page_id].typing)
 
     with open('src/data/pl.pkl', 'wb') as f:
       pickle.dump(result, f)

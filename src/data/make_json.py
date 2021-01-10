@@ -14,7 +14,7 @@ edge_id = 0
 
 def pretty_label(title):
   title = unquote(title)
-  title = title.replace("_", " ").replace("(programming_language)", "")
+  title = title.replace("_", " ").replace("(programming language)", "").strip()
   return title
 
 for key, value in data.items():
