@@ -11,24 +11,34 @@ function App() {
 
   const graph = new DirectedGraph();
   for (const node of graphData.nodes) {
-    console.log(node.id);
     graph.addNode(node.id, { label: node.label });
   }
 
   for (const edge of graphData.edges) {
     try {
-      graph.addEdge(edge.source, edge.target);
+      graph.addEdge(edge.source, edge.target, { arrow: "target" });
     } catch (e: any) {
       continue;
     }
   }
 
+  randomLayout.assign(graph);
+
   useEffect(() => {
-    randomLayout.assign(graph);
-    const renderer = new WebGLRenderer(graph, containerRef.current);
+    const renderer = new WebGLRenderer(graph, containerRef.current, {
+      defaultEdgeType: "arrow",
+    });
+    renderer.on("enterNode", (e) => {
+      for (const edge of graph.inEdges(e.node)) {
+        console.log(edge);
+        graph.updateEdgeAttribute(edge, "color", () => "#f00");
+      }
+      console.log("wow");
+    });
+    console.log(renderer.settings);
   });
 
-  const height = document.body.clientHeight / 2;
+  const height = document.body.clientHeight;
   return (
     <div>
       <div ref={containerRef} id="container" style={{ height }} />
