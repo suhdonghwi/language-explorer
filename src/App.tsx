@@ -106,6 +106,11 @@ function App() {
       graph.updateNodeAttribute(e.node, "color", () => defaultNodeColor);
     });
 
+    render.on("clickNode", (e) => {
+      console.log(e.event.clientX);
+      console.log(e.event.clientY);
+    });
+
     setRenderer(render);
   }, [graph]);
 
