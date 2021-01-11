@@ -10,6 +10,7 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
+    "@types/styled-components": "^5.1.7",
     "graphology": "^0.19.2",
     "graphology-layout": "^0.4.0",
     "graphology-layout-forceatlas2": "^0.6.0",
@@ -18,6 +19,7 @@
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
     "sigma": "^2.0.0-alpha40",
+    "styled-components": "^5.2.1",
     "typescript": "^4.0.3",
     "web-vitals": "^0.2.4"
   },
