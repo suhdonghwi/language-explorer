@@ -85,6 +85,11 @@ const LangTableValue = styled.td`
   color: #495057;
 `;
 
+const LangLink = styled.a`
+  word-break: break-all;
+  color: #228be6;
+`;
+
 interface FloatingBoxProps {
   lang: Language | null;
   onBack: () => void;
@@ -135,6 +140,33 @@ export default function FloatingBox({ lang, onBack }: FloatingBoxProps) {
               <LangTableValue>{lang.typing.join(", ")}</LangTableValue>
             </LangTableRow>
           )}
+
+          {lang.appeared && (
+            <LangTableRow>
+              <LangTableProp>Appeared</LangTableProp>
+              <LangTableValue>
+                {lang.appeared.replaceAll("-", ".")}
+              </LangTableValue>
+            </LangTableRow>
+          )}
+
+          {lang.website && (
+            <LangTableRow>
+              <LangTableProp>Website</LangTableProp>
+              <LangTableValue>
+                <LangLink href={lang.website}>{lang.website}</LangLink>
+              </LangTableValue>
+            </LangTableRow>
+          )}
+
+          <LangTableRow>
+            <LangTableProp>Wikipedia</LangTableProp>
+            <LangTableValue>
+              <LangLink href={"http://en.wikipedia.org/?curid=" + lang.id}>
+                Visit
+              </LangLink>
+            </LangTableValue>
+          </LangTableRow>
         </LangTable>
       </>
     ) : null;
