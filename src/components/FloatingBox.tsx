@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components/macro";
 
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
+import Skeleton from "react-loading-skeleton";
+
 import wiki from "wikijs";
 
 import Language from "../types/Language";
@@ -94,6 +96,8 @@ const LangLink = styled.a`
 const Summary = styled.p`
   color: #868e96;
   font-style: italic;
+
+  margin: 1.2rem 0 0.5rem 0;
 `;
 
 interface FloatingBoxProps {
@@ -114,6 +118,8 @@ export default function FloatingBox({ lang, onBack }: FloatingBoxProps) {
 
     async function fetch() {
       if (lang !== null) {
+        setSummary(null);
+
         const page = await wiki({
           apiUrl: "https://en.wikipedia.org/w/api.php",
         }).findById(lang.id);
@@ -149,7 +155,11 @@ export default function FloatingBox({ lang, onBack }: FloatingBoxProps) {
     lang !== null ? (
       <>
         <LangTitle>{lang.label}</LangTitle>
-        <Summary>{summary}</Summary>
+        {summary === null ? (
+          <Skeleton count={5} />
+        ) : (
+          <Summary>{summary}</Summary>
+        )}
         <LangTable>
           <tbody>
             {lang.paradigm && (
