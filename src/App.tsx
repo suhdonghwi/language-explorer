@@ -136,6 +136,10 @@ function App() {
     return () => window.removeEventListener("resize", updateSize);
   }, [renderer]);
 
+  function onBack() {
+    setLang(null);
+  }
+
   return (
     <div>
       <div
@@ -143,7 +147,7 @@ function App() {
         id="container"
         style={{ width: size.width, height: size.height }}
       />
-      <FloatingBox lang={lang} />
+      <FloatingBox lang={lang} onBack={onBack} />
     </div>
   );
 }

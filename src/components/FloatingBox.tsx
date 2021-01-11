@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components/macro";
 
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
@@ -42,7 +42,7 @@ const Description = styled.p`
   color: #343a40;
 `;
 
-const ShowHideButton = styled.button`
+const TopButton = styled.button`
   display: flex;
   align-items: center;
 
@@ -87,14 +87,19 @@ const LangTableValue = styled.td`
 
 interface FloatingBoxProps {
   lang: Language | null;
+  onBack: () => void;
 }
 
-export default function FloatingBox({ lang }: FloatingBoxProps) {
+export default function FloatingBox({ lang, onBack }: FloatingBoxProps) {
   const [showSidebar, setShowSidebar] = useState(true);
 
   function onToggleSidebar() {
     setShowSidebar(!showSidebar);
   }
+
+  useEffect(() => {
+    setShowSidebar(true);
+  }, [lang]);
 
   const defaultContent = (
     <>
@@ -136,7 +141,7 @@ export default function FloatingBox({ lang }: FloatingBoxProps) {
 
   return (
     <Box className={showSidebar ? "" : "hidden"}>
-      <ShowHideButton onClick={onToggleSidebar}>
+      <TopButton onClick={() => (lang === null ? onToggleSidebar() : onBack())}>
         {lang === null ? (
           showSidebar ? (
             <>
@@ -152,7 +157,7 @@ export default function FloatingBox({ lang }: FloatingBoxProps) {
             <FaAngleLeft /> Back
           </>
         )}
-      </ShowHideButton>
+      </TopButton>
       {lang === null ? defaultContent : languageContent}
     </Box>
   );
