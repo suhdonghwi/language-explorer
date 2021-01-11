@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components/macro";
 
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
+import wiki from "wikijs";
 
 import Language from "../types/Language";
 
@@ -90,6 +91,11 @@ const LangLink = styled.a`
   color: #228be6;
 `;
 
+const Summary = styled.p`
+  color: #868e96;
+  font-style: italic;
+`;
+
 interface FloatingBoxProps {
   lang: Language | null;
   onBack: () => void;
@@ -97,6 +103,7 @@ interface FloatingBoxProps {
 
 export default function FloatingBox({ lang, onBack }: FloatingBoxProps) {
   const [showSidebar, setShowSidebar] = useState(true);
+  const [summary, setSummary] = useState<string | null>(null);
 
   function onToggleSidebar() {
     setShowSidebar(!showSidebar);
@@ -104,6 +111,22 @@ export default function FloatingBox({ lang, onBack }: FloatingBoxProps) {
 
   useEffect(() => {
     setShowSidebar(true);
+
+    async function fetch() {
+      if (lang !== null) {
+        const page = await wiki({
+          apiUrl: "https://en.wikipedia.org/w/api.php",
+        }).findById(lang.id);
+        let summary = await page.summary();
+        summary = summary.replaceAll("()", "");
+
+        setSummary(
+          summary.slice(0, 200).concat(summary.length > 100 ? "..." : "")
+        );
+      }
+    }
+
+    fetch();
   }, [lang]);
 
   const defaultContent = (
@@ -126,47 +149,50 @@ export default function FloatingBox({ lang, onBack }: FloatingBoxProps) {
     lang !== null ? (
       <>
         <LangTitle>{lang.label}</LangTitle>
+        <Summary>{summary}</Summary>
         <LangTable>
-          {lang.paradigm && (
-            <LangTableRow>
-              <LangTableProp>Paradigm</LangTableProp>
-              <LangTableValue>{lang.paradigm.join(", ")}</LangTableValue>
-            </LangTableRow>
-          )}
+          <tbody>
+            {lang.paradigm && (
+              <LangTableRow>
+                <LangTableProp>Paradigm</LangTableProp>
+                <LangTableValue>{lang.paradigm.join(", ")}</LangTableValue>
+              </LangTableRow>
+            )}
 
-          {lang.typing && (
-            <LangTableRow>
-              <LangTableProp>Type</LangTableProp>
-              <LangTableValue>{lang.typing.join(", ")}</LangTableValue>
-            </LangTableRow>
-          )}
+            {lang.typing && (
+              <LangTableRow>
+                <LangTableProp>Type</LangTableProp>
+                <LangTableValue>{lang.typing.join(", ")}</LangTableValue>
+              </LangTableRow>
+            )}
 
-          {lang.appeared && (
+            {lang.appeared && (
+              <LangTableRow>
+                <LangTableProp>Appeared</LangTableProp>
+                <LangTableValue>
+                  {lang.appeared.replaceAll("-", ".")}
+                </LangTableValue>
+              </LangTableRow>
+            )}
+
+            {lang.website && (
+              <LangTableRow>
+                <LangTableProp>Website</LangTableProp>
+                <LangTableValue>
+                  <LangLink href={lang.website}>{lang.website}</LangLink>
+                </LangTableValue>
+              </LangTableRow>
+            )}
+
             <LangTableRow>
-              <LangTableProp>Appeared</LangTableProp>
+              <LangTableProp>Wikipedia</LangTableProp>
               <LangTableValue>
-                {lang.appeared.replaceAll("-", ".")}
+                <LangLink href={"http://en.wikipedia.org/?curid=" + lang.id}>
+                  Visit
+                </LangLink>
               </LangTableValue>
             </LangTableRow>
-          )}
-
-          {lang.website && (
-            <LangTableRow>
-              <LangTableProp>Website</LangTableProp>
-              <LangTableValue>
-                <LangLink href={lang.website}>{lang.website}</LangLink>
-              </LangTableValue>
-            </LangTableRow>
-          )}
-
-          <LangTableRow>
-            <LangTableProp>Wikipedia</LangTableProp>
-            <LangTableValue>
-              <LangLink href={"http://en.wikipedia.org/?curid=" + lang.id}>
-                Visit
-              </LangLink>
-            </LangTableValue>
-          </LangTableRow>
+          </tbody>
         </LangTable>
       </>
     ) : null;
