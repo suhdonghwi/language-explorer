@@ -1,4 +1,10 @@
-import React, { useRef, useEffect } from "react";
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useLayoutEffect,
+  useMemo,
+} from "react";
 
 import { WebGLRenderer } from "sigma";
 import { DirectedGraph } from "graphology";
@@ -9,6 +15,7 @@ import graphData from "./data/graph.json";
 
 function App() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
 
   const defaultEdgeColor = "rgba(100, 100, 100, 0.5)";
   const defaultNodeColor = "rgba(100, 100, 100)";
@@ -16,44 +23,48 @@ function App() {
   const defaultEdgeSize = 2.5;
   const activeEdgeSize = 3.5;
 
-  const graph = new DirectedGraph();
-  for (const node of graphData.nodes) {
-    graph.addNode(node.id, { label: node.label });
-  }
-
-  for (const edge of graphData.edges) {
-    try {
-      graph.addEdge(edge.source, edge.target, {
-        arrow: "target",
-        size: defaultEdgeSize,
-      });
-    } catch (e: any) {
-      continue;
+  const graph = useMemo(() => {
+    const g = new DirectedGraph();
+    for (const node of graphData.nodes) {
+      g.addNode(node.id, { label: node.label });
     }
-  }
 
-  graph.forEachNode((node) => {
-    graph.updateNodeAttribute(
-      node,
-      "size",
-      () => 2.5 + 0.8 * Math.sqrt(graph.outDegree(node))
-    );
-  });
+    for (const edge of graphData.edges) {
+      try {
+        g.addEdge(edge.source, edge.target, {
+          arrow: "target",
+          size: defaultEdgeSize,
+        });
+      } catch (e: any) {
+        continue;
+      }
+    }
 
-  randomLayout.assign(graph);
-  forceAtlas2.assign(graph, {
-    iterations: 200,
-    settings: { gravity: 20 },
-  });
+    g.forEachNode((node) => {
+      g.updateNodeAttribute(
+        node,
+        "size",
+        () => 2.5 + 0.8 * Math.sqrt(g.outDegree(node))
+      );
+    });
+
+    randomLayout.assign(g);
+    forceAtlas2.assign(g, {
+      iterations: 200,
+      settings: { gravity: 20 },
+    });
+
+    return g;
+  }, []);
 
   useEffect(() => {
-    const renderer = new WebGLRenderer(graph, containerRef.current, {
+    const render = new WebGLRenderer(graph, containerRef.current, {
       defaultEdgeColor,
       defaultEdgeType: "arrow",
       defaultNodeColor,
     });
 
-    renderer.on("enterNode", (e) => {
+    render.on("enterNode", (e) => {
       for (const edge of graph.inEdges(e.node)) {
         graph.updateEdgeAttribute(edge, "color", () => "#ffa8a8");
         graph.updateEdgeAttribute(edge, "size", () => activeEdgeSize);
@@ -69,7 +80,7 @@ function App() {
       graph.updateNodeAttribute(e.node, "color", () => "#20c997");
     });
 
-    renderer.on("leaveNode", (e) => {
+    render.on("leaveNode", (e) => {
       for (const edge of graph.inEdges(e.node).concat(graph.outEdges(e.node))) {
         graph.updateEdgeAttribute(edge, "color", () => defaultEdgeColor);
         graph.updateEdgeAttribute(edge, "size", () => defaultEdgeSize);
@@ -87,12 +98,34 @@ function App() {
 
       graph.updateNodeAttribute(e.node, "color", () => defaultNodeColor);
     });
+
+    setRenderer(render);
+  }, [graph]);
+
+  const [size, setSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
   });
 
-  const height = document.body.clientHeight;
+  useLayoutEffect(() => {
+    function updateSize() {
+      if (renderer !== null) {
+        setSize({ width: window.innerWidth, height: window.innerHeight });
+        renderer.resize(window.innerWidth, window.innerHeight);
+      }
+    }
+
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
+  }, [renderer]);
+
   return (
     <div>
-      <div ref={containerRef} id="container" style={{ height }} />
+      <div
+        ref={containerRef}
+        id="container"
+        style={{ width: size.width, height: size.height }}
+      />
     </div>
   );
 }
