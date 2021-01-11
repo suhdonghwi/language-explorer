@@ -13,6 +13,8 @@ import forceAtlas2 from "graphology-layout-forceatlas2";
 
 import graphData from "./data/graph.json";
 
+import FloatingBox from "./components/FloatingBox";
+
 function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
@@ -126,6 +128,7 @@ function App() {
         id="container"
         style={{ width: size.width, height: size.height }}
       />
+      <FloatingBox />
     </div>
   );
 }
