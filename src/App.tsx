@@ -27,6 +27,7 @@ function App() {
 
   const graph = useMemo(() => {
     const g = new DirectedGraph();
+    console.log(graphData.nodes.length);
     for (const node of graphData.nodes) {
       g.addNode(node.id, { label: node.label });
     }
@@ -67,6 +68,8 @@ function App() {
     });
 
     render.on("enterNode", (e) => {
+      document.body.style.cursor = "pointer";
+
       for (const edge of graph.inEdges(e.node)) {
         graph.updateEdgeAttribute(edge, "color", () => "#ffa8a8");
         graph.updateEdgeAttribute(edge, "size", () => activeEdgeSize);
@@ -83,6 +86,8 @@ function App() {
     });
 
     render.on("leaveNode", (e) => {
+      document.body.style.cursor = "default";
+
       for (const edge of graph.inEdges(e.node).concat(graph.outEdges(e.node))) {
         graph.updateEdgeAttribute(edge, "color", () => defaultEdgeColor);
         graph.updateEdgeAttribute(edge, "size", () => defaultEdgeSize);
