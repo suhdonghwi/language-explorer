@@ -17,7 +17,6 @@ const Box = styled.div`
   width: 330px;
 
   transform: translate(0, -50%);
-  transition: transform 0.5s;
 
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   background-color: white;
@@ -26,15 +25,28 @@ const Box = styled.div`
   padding: 10px 25px;
   box-sizing: border-box;
 
+  overflow: scroll;
+  transition: all 0.5s;
+
   &.hidden {
     transform: translate(85%, -50%);
+  }
+
+  @media screen and (max-width: 520px) {
+    width: 310px;
+    right: 50%;
+    transform: translate(50%, -50%);
+
+    &.hidden {
+      transform: translate(140%, -50%);
+    }
   }
 `;
 
 const Title = styled.h1`
   color: #212529;
 
-  font-size: 1.4rem;
+  font-size: 1.7rem;
   text-align: center;
 
   margin: 3rem 0 1.5rem 0;
