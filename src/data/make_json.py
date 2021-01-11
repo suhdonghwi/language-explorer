@@ -2,6 +2,7 @@ from urllib.parse import unquote
 from language import Language
 import pickle
 import json
+import re
 
 data = None
 with open('src/data/pl.pkl', 'rb') as f:
@@ -20,15 +21,29 @@ def pretty_label(title):
     return title
 
 
+def normalize_typing(s):
+    if s == "type inference":
+        return "inferred"
+    else:
+        return re.sub(r"typing$", "", s).strip()
+
+
+def normalize_paradigm(s):
+    if s.startswith("multi"):
+        return "multi paradigm"
+    else:
+        return re.sub(r"programming$|paradigm$", "", s).strip()
+
+
 for key, value in data.items():
     lang_id = str(key)
     node = {'id': lang_id, 'label': pretty_label(value.title)}
 
-    if value.paradigm is not None:
-        node['paradigm'] = value.paradigm
+    if value.paradigm is not None and len(value.paradigm) > 0:
+        node['paradigm'] = list(map(normalize_paradigm, value.paradigm))
 
-    if value.typing is not None:
-        node['typing'] = value.typing
+    if value.typing is not None and len(value.typing) > 0:
+        node['typing'] = list(map(normalize_typing, value.typing))
 
     if value.appeared is not None:
         node['appeared'] = value.appeared

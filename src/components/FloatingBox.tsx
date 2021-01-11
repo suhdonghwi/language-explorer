@@ -3,6 +3,8 @@ import styled from "styled-components/macro";
 
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
+import Language from "../types/Language";
+
 const Box = styled.div`
   position: absolute;
   top: 50%;
@@ -59,26 +61,43 @@ const ShowHideButton = styled.button`
   cursor: pointer;
 `;
 
-export default function FloatingBox() {
+const LangTitle = styled(Title)`
+  font-size: 1.7rem;
+  margin: 3rem 0 0.5rem 0;
+`;
+
+const LangTable = styled.table`
+  border-spacing: 0 1rem;
+`;
+
+const LangTableRow = styled.tr``;
+
+const LangTableProp = styled.td`
+  font-weight: bold;
+  text-align: center;
+
+  color: #343a40;
+`;
+
+const LangTableValue = styled.td`
+  padding-left: 20px;
+
+  color: #495057;
+`;
+
+interface FloatingBoxProps {
+  lang: Language | null;
+}
+
+export default function FloatingBox({ lang }: FloatingBoxProps) {
   const [showSidebar, setShowSidebar] = useState(true);
 
   function onToggleSidebar() {
     setShowSidebar(!showSidebar);
   }
 
-  return (
-    <Box className={showSidebar ? "" : "hidden"}>
-      <ShowHideButton onClick={onToggleSidebar}>
-        {showSidebar ? (
-          <>
-            <FaAngleRight /> Hide
-          </>
-        ) : (
-          <>
-            <FaAngleLeft /> Show
-          </>
-        )}
-      </ShowHideButton>
+  const defaultContent = (
+    <>
       <Title>🌎 language-explorer</Title>
       <Description>
         Explore 650+ programming languages, visualized based on paradigm
@@ -90,6 +109,51 @@ export default function FloatingBox() {
         <span style={{ color: "#339af0", fontWeight: "bold" }}>blue line</span>{" "}
         represents "influenced".
       </Description>
+    </>
+  );
+
+  const languageContent =
+    lang !== null ? (
+      <>
+        <LangTitle>{lang.label}</LangTitle>
+        <LangTable>
+          {lang.paradigm && (
+            <LangTableRow>
+              <LangTableProp>Paradigm</LangTableProp>
+              <LangTableValue>{lang.paradigm.join(", ")}</LangTableValue>
+            </LangTableRow>
+          )}
+
+          {lang.typing && (
+            <LangTableRow>
+              <LangTableProp>Type</LangTableProp>
+              <LangTableValue>{lang.typing.join(", ")}</LangTableValue>
+            </LangTableRow>
+          )}
+        </LangTable>
+      </>
+    ) : null;
+
+  return (
+    <Box className={showSidebar ? "" : "hidden"}>
+      <ShowHideButton onClick={onToggleSidebar}>
+        {lang === null ? (
+          showSidebar ? (
+            <>
+              <FaAngleRight /> Hide
+            </>
+          ) : (
+            <>
+              <FaAngleLeft /> Show
+            </>
+          )
+        ) : (
+          <>
+            <FaAngleLeft /> Back
+          </>
+        )}
+      </ShowHideButton>
+      {lang === null ? defaultContent : languageContent}
     </Box>
   );
 }

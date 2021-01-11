@@ -13,11 +13,14 @@ import forceAtlas2 from "graphology-layout-forceatlas2";
 
 import graphData from "./data/graph.json";
 
+import Language from "./types/Language";
 import FloatingBox from "./components/FloatingBox";
 
 function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
+
+  const [lang, setLang] = useState<Language | null>(null);
 
   const defaultEdgeColor = "rgba(100, 100, 100, 0.5)";
   const defaultNodeColor = "rgba(100, 100, 100)";
@@ -27,7 +30,7 @@ function App() {
 
   const graph = useMemo(() => {
     const g = new DirectedGraph();
-    console.log(graphData.nodes.length);
+
     for (const node of graphData.nodes) {
       g.addNode(node.id, { label: node.label });
     }
@@ -106,9 +109,11 @@ function App() {
       graph.updateNodeAttribute(e.node, "color", () => defaultNodeColor);
     });
 
-    render.on("clickNode", (e) => {
-      console.log(e.event.clientX);
-      console.log(e.event.clientY);
+    render.on("downNode", (e) => {
+      const lang: Language = graphData.nodes.find(
+        ({ id }) => id === e.node.toString()
+      )!;
+      setLang(lang);
     });
 
     setRenderer(render);
@@ -138,7 +143,7 @@ function App() {
         id="container"
         style={{ width: size.width, height: size.height }}
       />
-      <FloatingBox />
+      <FloatingBox lang={lang} />
     </div>
   );
 }

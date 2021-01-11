@@ -11,6 +11,10 @@ def get_html_content(url):
     return r.text
 
 
+def normalize(text):
+    return text.strip().lower().replace("-", " ")
+
+
 memo = {}
 
 
@@ -55,8 +59,8 @@ def get_text(soup, regex):
     box = soup.find(text=regex)
 
     if box is not None:
-        content = box.find_next("td").text
-        return list(map(lambda s: s.lower().strip(), content.split(",")))
+        links = box.find_next("td").findChildren("a")
+        return [link.text.lower().replace("-", " ") for link in links if link.text[0] != '[']
 
     return None
 
@@ -87,7 +91,10 @@ if __name__ == "__main__":
     inf_to_regex = re.compile('Influenced$')
 
     result = {}
-    for alpha in soup.find_all("h2")[:-2]:
+    with open('src/data/pl.pkl', 'rb') as f:
+        result = pickle.load(f)
+
+    for alpha in soup.find_all("h2")[19:-2]:
         for a in alpha.find_next("div").findChildren("a"):
             url = a["href"]
 
@@ -112,13 +119,15 @@ if __name__ == "__main__":
             if soup is not None:
                 inf_by = get_languages(soup, inf_by_regex)
                 inf_to = get_languages(soup, inf_to_regex)
-                paradigm = get_property(soup, "Paradigm")
+                paradigm = get_text(soup, "Paradigm")
                 typing = get_text(soup, "Typing discipline")
                 appeared = get_bday(soup)
                 website = get_website(soup)
 
             result[page_id] = Language(
                 title, inf_by, inf_to, paradigm, typing, appeared, website)
+            print(result[page_id].paradigm)
+            print(result[page_id].typing)
 
         with open('src/data/pl.pkl', 'wb') as f:
             pickle.dump(result, f)
