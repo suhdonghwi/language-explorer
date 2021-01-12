@@ -63,6 +63,8 @@ function App() {
     return g;
   }, []);
 
+  let highlightNode = useMemo(() => new Set<string>(), []);
+
   useEffect(() => {
     let influencedBy = new Set<string>();
     let influencedByNode = new Set<string>();
@@ -83,7 +85,15 @@ function App() {
     };
 
     const nodeReducer = (node: string, data: any) => {
-      if (node === currentNode) {
+      if (highlightNode.size > 0) {
+        if (highlightNode.has(node))
+          return {
+            ...data,
+            color: "#20c997",
+            size: Math.max(data.size + 1, 4),
+          };
+        else return { ...data, color: defaultEdgeColor };
+      } else if (node === currentNode) {
         return { ...data, color: "#20c997" };
       } else if (influencedByNode.has(node)) {
         return { ...data, color: "#ff6b6b" };
@@ -146,7 +156,7 @@ function App() {
     });
 
     setRenderer(render);
-  }, [graph]);
+  }, [graph, highlightNode]);
 
   const [size, setSize] = useState({
     width: window.innerWidth,
@@ -169,23 +179,16 @@ function App() {
     const lang = graphData.nodes.find((v) => v.label === name);
     if (lang === undefined || renderer === null) return;
 
-    const attribute = graph.getNodeAttributes(lang.id);
+    setLang(lang);
+  }
 
-    const camera = renderer.getCamera();
+  function onHighlight(target: string[]) {
+    highlightNode.clear();
+    for (const t of target) {
+      highlightNode.add(t);
+    }
 
-    const rect = camera.viewRectangle({
-      width: renderer.width,
-      height: renderer.height,
-    });
-    console.log(rect);
-    console.log(attribute);
-    /*console.log(
-      camera.viewportToGraph(
-        { width: rect.x2 - rect.x1, height: rect.height },
-        attribute.x,
-        attribute.y
-      )
-    );*/
+    if (renderer !== null) renderer.refresh();
   }
 
   return (
@@ -199,6 +202,7 @@ function App() {
         lang={lang}
         onBack={() => setLang(null)}
         onSearch={onSearch}
+        onHighlight={onHighlight}
       />
     </div>
   );

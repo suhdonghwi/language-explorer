@@ -48,7 +48,7 @@ interface SearchBoxProps {
 
   selected: Option | Option[] | null;
   onChange(v: any): void;
-  onSearch(): void;
+  onSearch?(): void;
 }
 
 export default function SearchBox({
@@ -71,9 +71,11 @@ export default function SearchBox({
             value={selected === null ? [] : selected}
           />
         </SelectContainer>
-        <SearchButton onClick={onSearch}>
-          <FaSearch />
-        </SearchButton>
+        {!isMulti && (
+          <SearchButton onClick={onSearch}>
+            <FaSearch />
+          </SearchButton>
+        )}
       </InputContainer>
     </Box>
   );

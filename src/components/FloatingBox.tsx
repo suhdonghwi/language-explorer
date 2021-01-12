@@ -84,12 +84,14 @@ interface FloatingBoxProps {
   lang: Language | null;
   onBack(): void;
   onSearch(s: string): void;
+  onHighlight(v: string[]): void;
 }
 
 export default function FloatingBox({
   lang,
   onBack,
   onSearch,
+  onHighlight,
 }: FloatingBoxProps) {
   const [showSidebar, setShowSidebar] = useState(true);
 
@@ -122,9 +124,41 @@ export default function FloatingBox({
     onSearch(language.label);
   }
 
-  function onSearchParadigm() {}
+  function onChangeParadigm(paradigm: Option[]) {
+    setParadigm(paradigm);
+    setTyping([]);
 
-  function onSearchTyping() {}
+    const result = [];
+    for (const p of paradigm) {
+      result.push(
+        ...graphData.nodes
+          .filter(
+            (n) => n.paradigm !== undefined && n.paradigm.includes(p.label)
+          )
+          .map((n) => n.id)
+      );
+    }
+
+    onHighlight(result);
+  }
+
+  function onChangeTyping(typing: Option[]) {
+    setTyping(typing);
+    setParadigm([]);
+
+    const result = [];
+    for (const t of typing) {
+      result.push(
+        ...graphData.nodes
+          .filter(
+            (n) => n.typing !== undefined && n.typing.includes(t.label)
+          )
+          .map((n) => n.id)
+      );
+    }
+
+    onHighlight(result);
+  }
 
   const [language, setLanguage] = useState<Option | null>(null);
   const [paradigm, setParadigm] = useState<Option[]>([]);
@@ -156,16 +190,14 @@ export default function FloatingBox({
         propList={Array.from(paradigmList)}
         isMulti={true}
         selected={paradigm}
-        onChange={(v) => setParadigm(v)}
-        onSearch={onSearchParadigm}
+        onChange={onChangeParadigm}
       />
       <SearchBox
         propName="typing discipline"
         propList={Array.from(typingList)}
         isMulti={true}
         selected={typing}
-        onChange={(v) => setTyping(v)}
-        onSearch={onSearchTyping}
+        onChange={onChangeTyping}
       />
     </>
   );
@@ -175,18 +207,18 @@ export default function FloatingBox({
       <TopButton onClick={() => (lang === null ? onToggleSidebar() : onBack())}>
         {lang === null ? (
           showSidebar ? (
-            <>
+            <div>
               <FaAngleRight /> Hide
-            </>
+            </div>
           ) : (
-            <>
+            <div>
               <FaAngleLeft /> Show
-            </>
+            </div>
           )
         ) : (
-          <>
+          <div>
             <FaAngleLeft /> Back
-          </>
+          </div>
         )}
       </TopButton>
       {lang === null ? defaultContent : <LanguageView lang={lang} />}
