@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components/macro";
+import { WebGLRenderer } from "sigma";
 
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import Language from "../types/Language";
 import LanguageView from "./LanguageView";
 import SearchBox from "./SearchBox";
+
+import Option from "../types/Option";
 
 import graphData from "../data/graph.json";
 
@@ -76,12 +79,18 @@ const TopButton = styled.button`
 
   cursor: pointer;
 `;
+
 interface FloatingBoxProps {
   lang: Language | null;
-  onBack: () => void;
+  onBack(): void;
+  onSearch(s: string): void;
 }
 
-export default function FloatingBox({ lang, onBack }: FloatingBoxProps) {
+export default function FloatingBox({
+  lang,
+  onBack,
+  onSearch,
+}: FloatingBoxProps) {
   const [showSidebar, setShowSidebar] = useState(true);
 
   function onToggleSidebar() {
@@ -108,9 +117,18 @@ export default function FloatingBox({ lang, onBack }: FloatingBoxProps) {
     }
   }
 
-  const [language, setLanguage] = useState<any>(null);
-  const [paradigm, setParadigm] = useState<any>(null);
-  const [typing, setTyping] = useState<any>(null);
+  function onSearchLanguage() {
+    if (language === null) return;
+    onSearch(language.label);
+  }
+
+  function onSearchParadigm() {}
+
+  function onSearchTyping() {}
+
+  const [language, setLanguage] = useState<Option | null>(null);
+  const [paradigm, setParadigm] = useState<Option[]>([]);
+  const [typing, setTyping] = useState<Option[]>([]);
 
   const defaultContent = (
     <>
@@ -131,6 +149,7 @@ export default function FloatingBox({ lang, onBack }: FloatingBoxProps) {
         isMulti={false}
         selected={language}
         onChange={(v) => setLanguage(v)}
+        onSearch={onSearchLanguage}
       />
       <SearchBox
         propName="paradigm"
@@ -138,6 +157,7 @@ export default function FloatingBox({ lang, onBack }: FloatingBoxProps) {
         isMulti={true}
         selected={paradigm}
         onChange={(v) => setParadigm(v)}
+        onSearch={onSearchParadigm}
       />
       <SearchBox
         propName="typing discipline"
@@ -145,6 +165,7 @@ export default function FloatingBox({ lang, onBack }: FloatingBoxProps) {
         isMulti={true}
         selected={typing}
         onChange={(v) => setTyping(v)}
+        onSearch={onSearchTyping}
       />
     </>
   );

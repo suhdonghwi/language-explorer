@@ -124,7 +124,7 @@ function App() {
       render.refresh();
     });
 
-    render.on("leaveNode", (e) => {
+    render.on("leaveNode", () => {
       document.body.style.cursor = "default";
 
       influencedTo.clear();
@@ -165,8 +165,27 @@ function App() {
     return () => window.removeEventListener("resize", updateSize);
   }, [renderer]);
 
-  function onBack() {
-    setLang(null);
+  function onSearch(name: string) {
+    const lang = graphData.nodes.find((v) => v.label === name);
+    if (lang === undefined || renderer === null) return;
+
+    const attribute = graph.getNodeAttributes(lang.id);
+
+    const camera = renderer.getCamera();
+
+    const rect = camera.viewRectangle({
+      width: renderer.width,
+      height: renderer.height,
+    });
+    console.log(rect);
+    console.log(attribute);
+    /*console.log(
+      camera.viewportToGraph(
+        { width: rect.x2 - rect.x1, height: rect.height },
+        attribute.x,
+        attribute.y
+      )
+    );*/
   }
 
   return (
@@ -176,7 +195,11 @@ function App() {
         id="container"
         style={{ width: size.width, height: size.height }}
       />
-      <FloatingBox lang={lang} onBack={onBack} />
+      <FloatingBox
+        lang={lang}
+        onBack={() => setLang(null)}
+        onSearch={onSearch}
+      />
     </div>
   );
 }

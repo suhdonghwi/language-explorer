@@ -8,7 +8,7 @@ import "react-virtualized/styles.css";
 import "react-virtualized-select/styles.css";
 
 import VirtualizedSelect from "react-virtualized-select";
-import Options from "react-virtualized-select";
+import Option from "../types/Option";
 
 const Box = styled.div`
   margin: 2rem 0;
@@ -46,8 +46,9 @@ interface SearchBoxProps {
   propList: string[];
   isMulti: boolean;
 
-  selected: any;
+  selected: Option | Option[] | null;
   onChange(v: any): void;
+  onSearch(): void;
 }
 
 export default function SearchBox({
@@ -55,6 +56,7 @@ export default function SearchBox({
   propList,
   isMulti,
   onChange,
+  onSearch,
   selected,
 }: SearchBoxProps) {
   return (
@@ -66,10 +68,10 @@ export default function SearchBox({
             multi={isMulti}
             options={propList.map((v) => ({ value: v, label: v }))}
             onChange={onChange}
-            value={selected}
+            value={selected === null ? [] : selected}
           />
         </SelectContainer>
-        <SearchButton>
+        <SearchButton onClick={onSearch}>
           <FaSearch />
         </SearchButton>
       </InputContainer>
