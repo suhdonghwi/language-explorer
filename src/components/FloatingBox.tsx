@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components/macro";
-import { WebGLRenderer } from "sigma";
 
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
