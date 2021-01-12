@@ -99,7 +99,6 @@
         "object oriented",
         "functional",
         "imperative",
-        "dependent typed",
         "logic"
       ],
       "appeared": "1990",
@@ -287,7 +286,7 @@
       "appeared": "2009-05-08",
       "website": "http://msdn.microsoft.com/en-us/devlabs/dd795202.aspx"
     },
-    { "id": "4475", "label": "B", "typing": ["word"], "appeared": "1969" },
+    { "id": "4475", "label": "B", "typing": ["typeless"], "appeared": "1969" },
     {
       "id": "22848897",
       "label": "Babbage",
@@ -309,7 +308,7 @@
     {
       "id": "4015",
       "label": "BASIC",
-      "paradigm": ["non structured", "procedural", "object oriented"],
+      "paradigm": ["unstructured", "procedural", "object oriented"],
       "appeared": "1964-05-01"
     },
     { "id": "15264030", "label": "Batch file" },
@@ -318,7 +317,7 @@
       "id": "4052",
       "label": "BCPL",
       "paradigm": ["procedural", "imperative", "structured"],
-      "typing": ["word"],
+      "typing": ["typeless"],
       "appeared": "1967"
     },
     {
@@ -366,7 +365,7 @@
     {
       "id": "60532073",
       "label": "Bosque",
-      "paradigm": ["multi paradigm", "functional", "typed language"],
+      "paradigm": ["multi paradigm", "functional"],
       "appeared": "2019-03-03",
       "website": "https://www.microsoft.com/en-us/research/project/bosque-programming-language/"
     },
@@ -1929,7 +1928,7 @@
     {
       "id": "1467946",
       "label": "Modelica",
-      "paradigm": ["declarative language"],
+      "paradigm": ["declarative"],
       "website": "https://www.modelica.org/"
     },
     {
@@ -2138,7 +2137,7 @@
     {
       "id": "630175",
       "label": "Object Pascal",
-      "typing": ["static and dynamic", "rtti", "strong", "safe"],
+      "typing": ["static", "dynamic", "rtti", "strong", "safe"],
       "appeared": "1986"
     },
     {
