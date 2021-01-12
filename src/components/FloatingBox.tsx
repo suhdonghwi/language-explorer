@@ -5,6 +5,7 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import Language from "../types/Language";
 import LanguageView from "./LanguageView";
+import SearchBox from "./SearchBox";
 
 const Box = styled.div`
   position: absolute;
@@ -102,6 +103,9 @@ export default function FloatingBox({ lang, onBack }: FloatingBoxProps) {
         <span style={{ color: "#339af0", fontWeight: "bold" }}>blue line</span>{" "}
         represents "influenced".
       </Description>
+      <SearchBox propName="name" propList={["a", "b", "c"]} />
+      <SearchBox propName="paradigm" propList={["a", "b", "c"]} />
+      <SearchBox propName="typing discipline" propList={["a", "b", "c"]} />
     </>
   );
 
