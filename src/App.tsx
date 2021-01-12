@@ -26,7 +26,7 @@ function App() {
   const defaultNodeColor = "rgba(100, 100, 100)";
 
   const defaultEdgeSize = 2.5;
-  const activeEdgeSize = 3.5;
+  const activeEdgeSize = 4;
 
   const graph = useMemo(() => {
     const g = new DirectedGraph();
@@ -64,49 +64,78 @@ function App() {
   }, []);
 
   useEffect(() => {
+    let influencedBy = new Set<string>();
+    let influencedByNode = new Set<string>();
+
+    let influencedTo = new Set<string>();
+    let influencedToNode = new Set<string>();
+
+    let currentNode: string | null = null;
+
+    const edgeReducer = (edge: string, data: any) => {
+      if (influencedBy.has(edge)) {
+        return { ...data, color: "#ff6b6b", size: activeEdgeSize };
+      } else if (influencedTo.has(edge)) {
+        return { ...data, color: "#339af0", size: activeEdgeSize };
+      } else {
+        return { ...data, color: defaultEdgeColor, size: defaultEdgeSize };
+      }
+    };
+
+    const nodeReducer = (node: string, data: any) => {
+      if (node === currentNode) {
+        return { ...data, color: "#20c997" };
+      } else if (influencedByNode.has(node)) {
+        return { ...data, color: "#ff6b6b" };
+      } else if (influencedToNode.has(node)) {
+        return { ...data, color: "#339af0" };
+      } else {
+        return { ...data, color: defaultNodeColor };
+      }
+    };
+
     const render = new WebGLRenderer(graph, containerRef.current, {
       defaultEdgeColor,
       defaultEdgeType: "arrow",
       defaultNodeColor,
+      edgeReducer,
+      nodeReducer,
     });
 
     render.on("enterNode", (e) => {
       document.body.style.cursor = "pointer";
 
+      influencedBy.clear();
+      influencedByNode.clear();
       for (const edge of graph.inEdges(e.node)) {
-        graph.updateEdgeAttribute(edge, "color", () => "#ffa8a8");
-        graph.updateEdgeAttribute(edge, "size", () => activeEdgeSize);
-        graph.updateNodeAttribute(graph.source(edge), "color", () => "#ff6b6b");
+        influencedBy.add(edge);
+        influencedByNode.add(graph.source(edge));
       }
 
+      influencedTo.clear();
+      influencedToNode.clear();
       for (const edge of graph.outEdges(e.node)) {
-        graph.updateEdgeAttribute(edge, "color", () => "#74c0fc");
-        graph.updateEdgeAttribute(edge, "size", () => activeEdgeSize);
-        graph.updateNodeAttribute(graph.target(edge), "color", () => "#339af0");
+        influencedTo.add(edge);
+        influencedToNode.add(graph.target(edge));
       }
 
-      graph.updateNodeAttribute(e.node, "color", () => "#20c997");
+      currentNode = e.node;
+
+      render.refresh();
     });
 
     render.on("leaveNode", (e) => {
       document.body.style.cursor = "default";
 
-      for (const edge of graph.inEdges(e.node).concat(graph.outEdges(e.node))) {
-        graph.updateEdgeAttribute(edge, "color", () => defaultEdgeColor);
-        graph.updateEdgeAttribute(edge, "size", () => defaultEdgeSize);
-        graph.updateNodeAttribute(
-          graph.source(edge),
-          "color",
-          () => defaultNodeColor
-        );
-        graph.updateNodeAttribute(
-          graph.target(edge),
-          "color",
-          () => defaultNodeColor
-        );
-      }
+      influencedTo.clear();
+      influencedToNode.clear();
 
-      graph.updateNodeAttribute(e.node, "color", () => defaultNodeColor);
+      influencedBy.clear();
+      influencedByNode.clear();
+
+      currentNode = null;
+
+      render.refresh();
     });
 
     render.on("downNode", (e) => {
