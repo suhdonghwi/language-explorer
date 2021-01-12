@@ -7,6 +7,8 @@ import Language from "../types/Language";
 import LanguageView from "./LanguageView";
 import SearchBox from "./SearchBox";
 
+import graphData from "../data/graph.json";
+
 const Box = styled.div`
   position: absolute;
   top: 50%;
@@ -90,6 +92,26 @@ export default function FloatingBox({ lang, onBack }: FloatingBoxProps) {
     setShowSidebar(true);
   }, [lang]);
 
+  const languageList = new Set<string>();
+  const paradigmList = new Set<string>();
+  const typingList = new Set<string>();
+
+  for (const lang of graphData.nodes) {
+    languageList.add(lang.label);
+
+    if (lang.paradigm !== undefined) {
+      for (const p of lang.paradigm) paradigmList.add(p);
+    }
+
+    if (lang.typing !== undefined) {
+      for (const p of lang.typing) typingList.add(p);
+    }
+  }
+
+  const [language, setLanguage] = useState<any>(null);
+  const [paradigm, setParadigm] = useState<any>(null);
+  const [typing, setTyping] = useState<any>(null);
+
   const defaultContent = (
     <>
       <Title>🌎 language-explorer</Title>
@@ -103,9 +125,27 @@ export default function FloatingBox({ lang, onBack }: FloatingBoxProps) {
         <span style={{ color: "#339af0", fontWeight: "bold" }}>blue line</span>{" "}
         represents "influenced".
       </Description>
-      <SearchBox propName="name" propList={["a", "b", "c"]} />
-      <SearchBox propName="paradigm" propList={["a", "b", "c"]} />
-      <SearchBox propName="typing discipline" propList={["a", "b", "c"]} />
+      <SearchBox
+        propName="name"
+        propList={Array.from(languageList)}
+        isMulti={false}
+        selected={language}
+        onChange={(v) => setLanguage(v)}
+      />
+      <SearchBox
+        propName="paradigm"
+        propList={Array.from(paradigmList)}
+        isMulti={true}
+        selected={paradigm}
+        onChange={(v) => setParadigm(v)}
+      />
+      <SearchBox
+        propName="typing discipline"
+        propList={Array.from(typingList)}
+        isMulti={true}
+        selected={typing}
+        onChange={(v) => setTyping(v)}
+      />
     </>
   );
 

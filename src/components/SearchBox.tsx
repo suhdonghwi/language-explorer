@@ -1,7 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components/macro";
 
 import { FaSearch } from "react-icons/fa";
+
+import "react-select/dist/react-select.css";
+import "react-virtualized/styles.css";
+import "react-virtualized-select/styles.css";
+
+import VirtualizedSelect from "react-virtualized-select";
+import Options from "react-virtualized-select";
 
 const Box = styled.div`
   margin: 2rem 0;
@@ -16,20 +23,9 @@ const InputContainer = styled.div`
   display: flex;
 `;
 
-const SearchInput = styled.input`
+const SelectContainer = styled.div`
   flex: 1;
-
-  appearance: none;
-  border: 1px solid #ced4da;
-  border-radius: 3px;
-
-  margin-right: 0.3rem;
-
-  font-size: 1.1rem;
-  padding: 0.3rem 0.5rem;
-  box-sizing: border-radius;
-
-  color: #343a40;
+  margin-right: 10px;
 `;
 
 const SearchButton = styled.button`
@@ -42,26 +38,37 @@ const SearchButton = styled.button`
   color: white;
   border-radius: 3px;
 
-  padding: 3px 7px 0 7px;
+  padding: 6px 8px 2px 7px;
 `;
 
 interface SearchBoxProps {
   propName: string;
   propList: string[];
+  isMulti: boolean;
+
+  selected: any;
+  onChange(v: any): void;
 }
 
-export default function SearchBox({ propName, propList }: SearchBoxProps) {
+export default function SearchBox({
+  propName,
+  propList,
+  isMulti,
+  onChange,
+  selected,
+}: SearchBoxProps) {
   return (
     <Box>
       <Title>Search by {propName}</Title>
       <InputContainer>
-        <SearchInput type="input" list="suggestions" />
-        <datalist id="suggestions">
-          {propList.map((s) => (
-            <option value={s} />
-          ))}
-        </datalist>
-
+        <SelectContainer>
+          <VirtualizedSelect
+            multi={isMulti}
+            options={propList.map((v) => ({ value: v, label: v }))}
+            onChange={onChange}
+            value={selected}
+          />
+        </SelectContainer>
         <SearchButton>
           <FaSearch />
         </SearchButton>

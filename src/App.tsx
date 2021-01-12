@@ -74,9 +74,9 @@ function App() {
 
     const edgeReducer = (edge: string, data: any) => {
       if (influencedBy.has(edge)) {
-        return { ...data, color: "#ff6b6b", size: activeEdgeSize };
+        return { ...data, color: "#ff8787", size: activeEdgeSize };
       } else if (influencedTo.has(edge)) {
-        return { ...data, color: "#339af0", size: activeEdgeSize };
+        return { ...data, color: "#4dabf7", size: activeEdgeSize };
       } else {
         return { ...data, color: defaultEdgeColor, size: defaultEdgeSize };
       }
