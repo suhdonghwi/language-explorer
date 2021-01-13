@@ -225,9 +225,7 @@ function App() {
       render.refresh();
     });
 
-    render.on("downNode", (e) => {
-      console.log(graph.getNodeAttributes(e.node));
-
+    render.on("clickNode", (e) => {
       const lang: Language = graphData.nodes.find(
         ({ id }) => id === e.node.toString()
       )!;
