@@ -108,24 +108,24 @@ export default function FloatingBox({
     setShowSidebar(true);
   }, [lang]);
 
-  const languageList = new Set<Option<string>>();
-  const paradigmList = new Set<Option<string>>();
-  const typingList = new Set<Option<string>>();
-  const layoutList = new Set<Option<Layout>>([
-    { label: "Timeline (Up-down)", value: "timeUD" },
-    { label: "Timeline (Left-right)", value: "timeLR" },
-    { label: "Web", value: "web" },
+  const languageList = new Set<string>();
+  const paradigmList = new Set<string>();
+  const typingList = new Set<string>();
+  const layoutList = new Set<Layout>([
+    "Timeline (Up-down)",
+    "Timeline (Left-right)",
+    "Web",
   ]);
 
   for (const lang of graphData.nodes) {
-    languageList.add({ label: lang.label, value: lang.id });
+    languageList.add(lang.label);
 
     if (lang.paradigm !== undefined) {
-      for (const p of lang.paradigm) paradigmList.add({ label: p, value: p });
+      for (const p of lang.paradigm) paradigmList.add(p);
     }
 
     if (lang.typing !== undefined) {
-      for (const t of lang.typing) typingList.add({ label: t, value: t });
+      for (const t of lang.typing) typingList.add(t);
     }
   }
 

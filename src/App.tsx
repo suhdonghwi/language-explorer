@@ -28,7 +28,7 @@ function App() {
   const [lang, setLang] = useState<Language | null>(null);
   const [layout, setLayout] = useState<Option<Layout>>({
     label: "Web",
-    value: "web",
+    value: "Web",
   });
 
   const defaultEdgeColor = "rgba(100, 100, 100, 0.5)";
@@ -73,7 +73,7 @@ function App() {
       );
     }
 
-    if (layout.value === "web") {
+    if (layout.value === "Web") {
       if (webLayout === null) {
         randomLayout.assign(graph);
 
@@ -124,7 +124,7 @@ function App() {
         );
 
         sorted.forEach((node, i) => {
-          if (layout.value === "timeLR") {
+          if (layout.value === "Timeline (Left-right)") {
             const x = parseInt(year),
               y = i % 2 === 0 ? i / 2 : -(i + 1) / 2;
             graph.setNodeAttribute(node, "x", x);

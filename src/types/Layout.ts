@@ -1,3 +1,3 @@
-type Layout = "timeUD" | "timeLR" | "web";
+type Layout = "Timeline (Up-down)" | "Timeline (Left-right)" | "Web";
 
 export default Layout;

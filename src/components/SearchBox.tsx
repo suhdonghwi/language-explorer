@@ -43,7 +43,7 @@ const SearchButton = styled.button`
 
 interface SearchBoxProps<T> {
   title: string;
-  options: Set<Option<T>>;
+  options: Set<T>;
   isMulti: boolean;
   isClearable: boolean;
 
@@ -68,7 +68,10 @@ export default function SearchBox<T>({
         <SelectContainer>
           <VirtualizedSelect
             multi={isMulti}
-            options={Array.from(options)}
+            options={Array.from(options).map((v) => ({
+              label: (v as unknown) as string,
+              value: v,
+            }))}
             onChange={onChange}
             value={selected === null ? [] : selected}
             clearable={isClearable}
