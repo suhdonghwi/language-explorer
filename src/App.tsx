@@ -27,8 +27,8 @@ function App() {
 
   const [lang, setLang] = useState<Language | null>(null);
   const [layout, setLayout] = useState<Option<Layout>>({
-    label: "Timeline (Left-right)",
-    value: "timeLR",
+    label: "Web",
+    value: "web",
   });
 
   const defaultEdgeColor = "rgba(100, 100, 100, 0.5)";
@@ -38,6 +38,10 @@ function App() {
   const activeEdgeSize = 4;
 
   const graph = useMemo(() => new DirectedGraph(), []);
+  const [webLayout, setWebLayout] = useState<Record<
+    string,
+    { x: number; y: number }
+  > | null>(null);
 
   useEffect(() => {
     graph.clear();
@@ -48,18 +52,20 @@ function App() {
         label: node.label,
         appeared: node.appeared,
       });
+    }
 
-      for (const edge of graphData.edges) {
-        try {
-          graph.addEdge(edge.source, edge.target, {
-            arrow: "target",
-            size: defaultEdgeSize,
-          });
-        } catch (e: any) {
-          continue;
-        }
+    for (const edge of graphData.edges) {
+      try {
+        graph.addEdge(edge.source, edge.target, {
+          arrow: "target",
+          size: defaultEdgeSize,
+        });
+      } catch (e: any) {
+        continue;
       }
+    }
 
+    for (const node of graphData.nodes) {
       graph.setNodeAttribute(
         node.id,
         "size",
@@ -68,14 +74,31 @@ function App() {
     }
 
     if (layout.value === "web") {
-      randomLayout.assign(graph);
-      forceAtlas2.assign(graph, {
-        iterations: 100,
-        settings: { gravity: 5, barnesHutOptimize: true, adjustSizes: true },
-      });
-      noverlap.assign(graph, {
-        maxIterations: 100,
-      });
+      if (webLayout === null) {
+        randomLayout.assign(graph);
+
+        forceAtlas2.assign(graph, {
+          iterations: 100,
+          settings: { gravity: 5, barnesHutOptimize: true, adjustSizes: true },
+        });
+        noverlap.assign(graph, {
+          maxIterations: 100,
+        });
+
+        const layout: Record<string, { x: number; y: number }> = {};
+        graph.forEachNode((node) => {
+          layout[node] = {
+            x: graph.getNodeAttribute(node, "x"),
+            y: graph.getNodeAttribute(node, "y"),
+          };
+        });
+        setWebLayout(layout);
+      } else {
+        for (const key in webLayout) {
+          graph.setNodeAttribute(key, "x", webLayout[key].x);
+          graph.setNodeAttribute(key, "y", webLayout[key].y);
+        }
+      }
     } else {
       const nodeMap: Record<number, string[]> = {};
 
@@ -115,7 +138,7 @@ function App() {
         });
       }
     }
-  }, [graph, layout]);
+  }, [graph, layout, webLayout]);
 
   let highlightNode = useMemo(() => new Set<string>(), []);
 
