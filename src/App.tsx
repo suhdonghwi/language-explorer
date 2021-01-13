@@ -8,6 +8,9 @@ import React, {
 
 import { WebGLRenderer } from "sigma";
 import { DirectedGraph } from "graphology";
+
+import Layout from "./types/Layout";
+
 import randomLayout from "graphology-layout/random";
 import forceAtlas2 from "graphology-layout-forceatlas2";
 import noverlap from "graphology-layout-noverlap";
@@ -22,6 +25,7 @@ function App() {
   const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
 
   const [lang, setLang] = useState<Language | null>(null);
+  const [layout, setLayout] = useState<Layout>("timeUD");
 
   const defaultEdgeColor = "rgba(100, 100, 100, 0.5)";
   const defaultNodeColor = "rgba(100, 100, 100)";
@@ -29,65 +33,85 @@ function App() {
   const defaultEdgeSize = 2.5;
   const activeEdgeSize = 4;
 
-  const graph = useMemo(() => {
-    const g = new DirectedGraph();
+  const graph = useMemo(() => new DirectedGraph(), []);
+
+  useEffect(() => {
+    graph.clear();
+    graph.clearEdges();
 
     for (const node of graphData.nodes) {
-      g.addNode(node.id, { label: node.label, appeared: node.appeared });
-    }
+      graph.addNode(node.id, {
+        label: node.label,
+        appeared: node.appeared,
+      });
 
-    for (const edge of graphData.edges) {
-      try {
-        g.addEdge(edge.source, edge.target, {
-          arrow: "target",
-          size: defaultEdgeSize,
-        });
-      } catch (e: any) {
-        continue;
+      for (const edge of graphData.edges) {
+        try {
+          graph.addEdge(edge.source, edge.target, {
+            arrow: "target",
+            size: defaultEdgeSize,
+          });
+        } catch (e: any) {
+          continue;
+        }
       }
-    }
 
-    const countMap: Record<number, number> = {};
-
-    g.forEachNode((node) => {
-      g.updateNodeAttribute(
-        node,
+      graph.setNodeAttribute(
+        node.id,
         "size",
-        () => 2.5 + 0.8 * Math.sqrt(g.outDegree(node))
+        2.5 + 0.8 * Math.sqrt(graph.outDegree(node.id))
       );
+    }
 
-      const appeared = g.getNodeAttribute(node, "appeared");
-      if (appeared === undefined) {
-        g.dropNode(node);
-      } else {
-        const year = parseInt(appeared.split(".")[0]);
+    if (layout === "web") {
+      randomLayout.assign(graph);
+      forceAtlas2.assign(graph, {
+        iterations: 100,
+        settings: { gravity: 5, barnesHutOptimize: true, adjustSizes: true },
+      });
+      noverlap.assign(graph, {
+        maxIterations: 100,
+      });
+    } else {
+      const nodeMap: Record<number, string[]> = {};
 
-        g.updateNodeAttribute(node, "x", () => {
-          if (countMap[year] !== undefined) {
-            countMap[year]++;
+      graph.forEachNode((node) => {
+        const appeared = graph.getNodeAttribute(node, "appeared");
+        if (appeared === undefined) {
+          graph.dropNode(node);
+        } else {
+          const year = parseInt(appeared.split(".")[0]);
+
+          if (nodeMap[year] !== undefined) {
+            nodeMap[year].push(node);
           } else {
-            countMap[year] = 1;
+            nodeMap[year] = [node];
           }
+        }
+      });
 
-          return (year - 1948);
+      for (const year in nodeMap) {
+        const nodes = nodeMap[year];
+        const sorted = nodes.sort(
+          (a, b) => graph.outDegree(b) - graph.outDegree(a)
+        );
+
+        sorted.forEach((node, i) => {
+          if (layout === "timeLR") {
+            const x = parseInt(year),
+              y = i % 2 === 0 ? i / 2 : -(i + 1) / 2;
+            graph.setNodeAttribute(node, "x", x);
+            graph.setNodeAttribute(node, "y", y * 2);
+          } else {
+            const x = i % 2 === 0 ? i / 2 : -(i + 1) / 2,
+              y = -parseInt(year);
+            graph.setNodeAttribute(node, "x", x * 2);
+            graph.setNodeAttribute(node, "y", y);
+          }
         });
-
-        g.updateNodeAttribute(node, "y", () => countMap[year] * 2);
       }
-    });
-
-    /*
-    randomLayout.assign(g);
-    forceAtlas2.assign(g, {
-      iterations: 100,
-      settings: { gravity: 5, barnesHutOptimize: true, adjustSizes: true },
-    });
-    noverlap.assign(g, {
-      maxIterations: 100,
-    });*/
-
-    return g;
-  }, []);
+    }
+  }, [graph, layout]);
 
   let highlightNode = useMemo(() => new Set<string>(), []);
 
