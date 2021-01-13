@@ -22,17 +22,37 @@ def pretty_label(title):
 
 
 def normalize_typing(s):
-    if s == "type inference":
-        return "inferred"
+    if s in ["type inference", "partially inferred"]:
+        return ["inferred"]
+    elif s in ["static and dynamic", "static, with dynamic features"]:
+        return ["static", "dynamic"]
+    elif s in ["word", "typeless"]:
+        return ["untyped"]
+    elif "," in s:
+        return s.split(", ")
     else:
-        return re.sub(r"typing$", "", s).strip()
+        return [re.sub(r"typing$", "", s).strip()]
 
 
 def normalize_paradigm(s):
     if s.startswith("multi"):
-        return "multi paradigm"
+        return ["multi paradigm"]
+    elif s.startswith("prototype"):
+        return ["prototype based"]
+    elif s == "non structured":
+        return ["unstructured"]
+    elif s == "scripting language":
+        return ["scripting"]
+    elif s == "exp oriented":
+        return ["expression oriented"]
+    elif s == "purely functional":
+        return ["functional"]
+    elif "," in s:
+        return s.split(", ")
+    elif s in ["dependent typed", "typed language", "algebraic types"]:
+        return []
     else:
-        return re.sub(r"programming$|paradigm$", "", s).strip()
+        return [re.sub(r"programming$|paradigm$", "", s).strip()]
 
 
 for key, value in data.items():
@@ -40,10 +60,18 @@ for key, value in data.items():
     node = {'id': lang_id, 'label': pretty_label(value.title)}
 
     if value.paradigm is not None and len(value.paradigm) > 0:
-        node['paradigm'] = list(map(normalize_paradigm, value.paradigm))
+        paradigm = []
+        for p in value.paradigm:
+            paradigm.extend(normalize_paradigm(p))
+
+        node['paradigm'] = paradigm
 
     if value.typing is not None and len(value.typing) > 0:
-        node['typing'] = list(map(normalize_typing, value.typing))
+        typing = []
+        for t in value.typing:
+            typing.extend(normalize_typing(t))
+
+        node['typing'] = typing
 
     if value.appeared is not None:
         node['appeared'] = value.appeared

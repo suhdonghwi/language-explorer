@@ -66,10 +66,12 @@ def get_text(soup, regex):
 
 
 def get_bday(soup):
-    box = soup.find("span", {"class": "bday"})
+    box = soup.find(text=re.compile("appeared"))
 
     if box is not None:
-        return box.text
+        bday = box.find_next("td").find("span", {"class": "bday"})
+        if bday is not None:
+            return bday.text
 
     return None
 
@@ -94,7 +96,7 @@ if __name__ == "__main__":
     with open('src/data/pl.pkl', 'rb') as f:
         result = pickle.load(f)
 
-    for alpha in soup.find_all("h2")[19:-2]:
+    for alpha in soup.find_all("h2"):
         for a in alpha.find_next("div").findChildren("a"):
             url = a["href"]
 
@@ -126,8 +128,7 @@ if __name__ == "__main__":
 
             result[page_id] = Language(
                 title, inf_by, inf_to, paradigm, typing, appeared, website)
-            print(result[page_id].paradigm)
-            print(result[page_id].typing)
+            print(result[page_id].appeared)
 
         with open('src/data/pl.pkl', 'wb') as f:
             pickle.dump(result, f)

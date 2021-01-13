@@ -33,7 +33,7 @@ function App() {
     const g = new DirectedGraph();
 
     for (const node of graphData.nodes) {
-      g.addNode(node.id, { label: node.label });
+      g.addNode(node.id, { label: node.label, appeared: node.appeared });
     }
 
     for (const edge of graphData.edges) {
@@ -47,14 +47,36 @@ function App() {
       }
     }
 
+    const countMap: Record<number, number> = {};
+
     g.forEachNode((node) => {
       g.updateNodeAttribute(
         node,
         "size",
         () => 2.5 + 0.8 * Math.sqrt(g.outDegree(node))
       );
+
+      const appeared = g.getNodeAttribute(node, "appeared");
+      if (appeared === undefined) {
+        g.dropNode(node);
+      } else {
+        const year = parseInt(appeared.split(".")[0]);
+
+        g.updateNodeAttribute(node, "x", () => {
+          if (countMap[year] !== undefined) {
+            countMap[year]++;
+          } else {
+            countMap[year] = 1;
+          }
+
+          return (year - 1948);
+        });
+
+        g.updateNodeAttribute(node, "y", () => countMap[year] * 2);
+      }
     });
 
+    /*
     randomLayout.assign(g);
     forceAtlas2.assign(g, {
       iterations: 100,
@@ -62,7 +84,7 @@ function App() {
     });
     noverlap.assign(g, {
       maxIterations: 100,
-    });
+    });*/
 
     return g;
   }, []);
@@ -153,6 +175,8 @@ function App() {
     });
 
     render.on("downNode", (e) => {
+      console.log(graph.getNodeAttributes(e.node));
+
       const lang: Language = graphData.nodes.find(
         ({ id }) => id === e.node.toString()
       )!;
