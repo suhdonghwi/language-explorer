@@ -102,25 +102,25 @@ export default function FloatingBox({
     setShowSidebar(true);
   }, [lang]);
 
-  const languageList = new Set<string>();
-  const paradigmList = new Set<string>();
-  const typingList = new Set<string>();
+  const languageList = new Set<Option>();
+  const paradigmList = new Set<Option>();
+  const typingList = new Set<Option>();
 
   for (const lang of graphData.nodes) {
-    languageList.add(lang.label);
+    languageList.add({ label: lang.label, value: lang.id });
 
     if (lang.paradigm !== undefined) {
-      for (const p of lang.paradigm) paradigmList.add(p);
+      for (const p of lang.paradigm) paradigmList.add({ label: p, value: p });
     }
 
     if (lang.typing !== undefined) {
-      for (const p of lang.typing) typingList.add(p);
+      for (const t of lang.typing) typingList.add({ label: t, value: t });
     }
   }
 
   function onSearchLanguage() {
     if (language === null) return;
-    onSearch(language.label);
+    onSearch(language.value);
   }
 
   function onChangeParadigm(paradigm: Option[]) {
@@ -149,9 +149,7 @@ export default function FloatingBox({
     for (const t of typing) {
       result.push(
         ...graphData.nodes
-          .filter(
-            (n) => n.typing !== undefined && n.typing.includes(t.label)
-          )
+          .filter((n) => n.typing !== undefined && n.typing.includes(t.label))
           .map((n) => n.id)
       );
     }
@@ -178,7 +176,7 @@ export default function FloatingBox({
       </Description>
       <SearchBox
         propName="name"
-        propList={Array.from(languageList)}
+        options={languageList}
         isMulti={false}
         selected={language}
         onChange={(v) => setLanguage(v)}
@@ -186,14 +184,14 @@ export default function FloatingBox({
       />
       <SearchBox
         propName="paradigm"
-        propList={Array.from(paradigmList)}
+        options={paradigmList}
         isMulti={true}
         selected={paradigm}
         onChange={onChangeParadigm}
       />
       <SearchBox
         propName="typing discipline"
-        propList={Array.from(typingList)}
+        options={typingList}
         isMulti={true}
         selected={typing}
         onChange={onChangeTyping}

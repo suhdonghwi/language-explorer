@@ -43,7 +43,7 @@ const SearchButton = styled.button`
 
 interface SearchBoxProps {
   propName: string;
-  propList: string[];
+  options: Set<Option>;
   isMulti: boolean;
 
   selected: Option | Option[] | null;
@@ -53,7 +53,7 @@ interface SearchBoxProps {
 
 export default function SearchBox({
   propName,
-  propList,
+  options,
   isMulti,
   onChange,
   onSearch,
@@ -66,7 +66,7 @@ export default function SearchBox({
         <SelectContainer>
           <VirtualizedSelect
             multi={isMulti}
-            options={propList.map((v) => ({ value: v, label: v }))}
+            options={Array.from(options)}
             onChange={onChange}
             value={selected === null ? [] : selected}
           />

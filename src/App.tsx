@@ -227,8 +227,8 @@ function App() {
     return () => window.removeEventListener("resize", updateSize);
   }, [renderer]);
 
-  function onSearch(name: string) {
-    const lang = graphData.nodes.find((v) => v.label === name);
+  function onSearch(id: string) {
+    const lang = graphData.nodes.find((v) => v.id === id);
     if (lang === undefined || renderer === null) return;
 
     setLang(lang);
