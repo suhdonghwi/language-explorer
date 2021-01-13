@@ -10,6 +10,7 @@ import { WebGLRenderer } from "sigma";
 import { DirectedGraph } from "graphology";
 import randomLayout from "graphology-layout/random";
 import forceAtlas2 from "graphology-layout-forceatlas2";
+import noverlap from "graphology-layout-noverlap";
 
 import graphData from "./data/graph.json";
 
@@ -56,8 +57,11 @@ function App() {
 
     randomLayout.assign(g);
     forceAtlas2.assign(g, {
-      iterations: 200,
-      settings: { gravity: 20 },
+      iterations: 100,
+      settings: { gravity: 5, barnesHutOptimize: true, adjustSizes: true},
+    });
+    noverlap.assign(g, {
+      maxIterations: 100,
     });
 
     return g;

@@ -5703,6 +5703,13 @@ graphology-layout-forceatlas2@^0.6.0:
   dependencies:
     graphology-utils "^1.8.0"
 
+graphology-layout-noverlap@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/graphology-layout-noverlap/-/graphology-layout-noverlap-0.3.0.tgz#671a9ea3f52950c6284d33fd91493683f14f5b87"
+  integrity sha512-cZixKw9m2vnnVxnyHbBFJysVXKt5ZYITURjhGx6yE6gywI3Yy7YmTafkh8115QtCHdEzJRVRCq9Upto9HGqCvg==
+  dependencies:
+    graphology-utils "^1.8.0"
+
 graphology-layout@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/graphology-layout/-/graphology-layout-0.4.0.tgz#2e9049b92a64a8de6f140a52e9c734a443fa5d8e"

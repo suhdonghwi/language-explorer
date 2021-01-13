@@ -15,6 +15,7 @@
     "graphology": "^0.19.2",
     "graphology-layout": "^0.4.0",
     "graphology-layout-forceatlas2": "^0.6.0",
+    "graphology-layout-noverlap": "^0.3.0",
     "graphology-types": "^0.19.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
