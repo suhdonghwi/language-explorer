@@ -493,7 +493,7 @@
     {
       "id": "18718048",
       "label": "Chomski",
-      "paradigm": ["scripting language"],
+      "paradigm": ["scripting"],
       "appeared": "2007",
       "website": "http://bumble.sourceforge.net/books/pars/"
     },
@@ -1347,7 +1347,7 @@
     {
       "id": "27404990",
       "label": "Haskell",
-      "paradigm": ["purely functional"],
+      "paradigm": ["functional"],
       "typing": ["inferred", "static", "strong"],
       "appeared": "1990",
       "website": "https://www.haskell.org"
@@ -1660,7 +1660,7 @@
         "imperative",
         "procedural",
         "concurrent",
-        "exp oriented",
+        "expression oriented",
         "meta",
         "reflective"
       ],
@@ -2064,7 +2064,7 @@
     {
       "id": "60545",
       "label": "NewtonScript",
-      "paradigm": ["prototype", "object oriented"],
+      "paradigm": ["prototype based", "object oriented"],
       "typing": ["dynamic"],
       "appeared": "1993"
     },
@@ -2463,7 +2463,7 @@
     {
       "id": "24080",
       "label": "PostScript",
-      "paradigm": ["multi paradigm", "stack based", "procedural"],
+      "paradigm": ["multi paradigm", "stack oriented", "procedural"],
       "appeared": "1982"
     },
     {
@@ -2705,7 +2705,7 @@
     {
       "id": "512681",
       "label": "RPL",
-      "paradigm": ["stack", "structured", "object oriented"]
+      "paradigm": ["stack oriented", "structured", "object oriented"]
     },
     {
       "id": "220048",

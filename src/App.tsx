@@ -58,7 +58,7 @@ function App() {
     randomLayout.assign(g);
     forceAtlas2.assign(g, {
       iterations: 100,
-      settings: { gravity: 5, barnesHutOptimize: true, adjustSizes: true},
+      settings: { gravity: 5, barnesHutOptimize: true, adjustSizes: true },
     });
     noverlap.assign(g, {
       maxIterations: 100,
