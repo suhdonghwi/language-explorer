@@ -6,6 +6,7 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import Language from "../types/Language";
 import LanguageView from "./LanguageView";
 import SearchBox from "./SearchBox";
+import Layout from "../types/Layout";
 
 import Option from "../types/Option";
 
@@ -84,6 +85,9 @@ interface FloatingBoxProps {
   onBack(): void;
   onSearch(s: string): void;
   onHighlight(v: string[]): void;
+
+  layout: Option<Layout>;
+  onChangeLayout(v: Option<Layout>): void;
 }
 
 export default function FloatingBox({
@@ -91,6 +95,8 @@ export default function FloatingBox({
   onBack,
   onSearch,
   onHighlight,
+  layout,
+  onChangeLayout,
 }: FloatingBoxProps) {
   const [showSidebar, setShowSidebar] = useState(true);
 
@@ -102,9 +108,14 @@ export default function FloatingBox({
     setShowSidebar(true);
   }, [lang]);
 
-  const languageList = new Set<Option>();
-  const paradigmList = new Set<Option>();
-  const typingList = new Set<Option>();
+  const languageList = new Set<Option<string>>();
+  const paradigmList = new Set<Option<string>>();
+  const typingList = new Set<Option<string>>();
+  const layoutList = new Set<Option<Layout>>([
+    { label: "Timeline (Up-down)", value: "timeUD" },
+    { label: "Timeline (Left-right)", value: "timeLR" },
+    { label: "Web", value: "web" },
+  ]);
 
   for (const lang of graphData.nodes) {
     languageList.add({ label: lang.label, value: lang.id });
@@ -123,7 +134,7 @@ export default function FloatingBox({
     onSearch(language.value);
   }
 
-  function onChangeParadigm(paradigm: Option[]) {
+  function onChangeParadigm(paradigm: Option<string>[]) {
     setParadigm(paradigm);
     setTyping([]);
 
@@ -141,7 +152,7 @@ export default function FloatingBox({
     onHighlight(result);
   }
 
-  function onChangeTyping(typing: Option[]) {
+  function onChangeTyping(typing: Option<string>[]) {
     setTyping(typing);
     setParadigm([]);
 
@@ -157,9 +168,9 @@ export default function FloatingBox({
     onHighlight(result);
   }
 
-  const [language, setLanguage] = useState<Option | null>(null);
-  const [paradigm, setParadigm] = useState<Option[]>([]);
-  const [typing, setTyping] = useState<Option[]>([]);
+  const [language, setLanguage] = useState<Option<string> | null>(null);
+  const [paradigm, setParadigm] = useState<Option<string>[]>([]);
+  const [typing, setTyping] = useState<Option<string>[]>([]);
 
   const defaultContent = (
     <>
@@ -175,24 +186,35 @@ export default function FloatingBox({
         represents "influenced".
       </Description>
       <SearchBox
-        propName="name"
+        title="Layout"
+        options={layoutList}
+        isMulti={false}
+        isClearable={false}
+        selected={layout}
+        onChange={(v) => onChangeLayout(v)}
+      />
+      <SearchBox
+        title="Search by name"
         options={languageList}
         isMulti={false}
+        isClearable={true}
         selected={language}
         onChange={(v) => setLanguage(v)}
         onSearch={onSearchLanguage}
       />
       <SearchBox
-        propName="paradigm"
+        title="Search by paradigm"
         options={paradigmList}
         isMulti={true}
+        isClearable={true}
         selected={paradigm}
         onChange={onChangeParadigm}
       />
       <SearchBox
-        propName="typing discipline"
+        title="Search by typing discipline"
         options={typingList}
         isMulti={true}
+        isClearable={true}
         selected={typing}
         onChange={onChangeTyping}
       />

@@ -41,27 +41,29 @@ const SearchButton = styled.button`
   padding: 6px 8px 2px 7px;
 `;
 
-interface SearchBoxProps {
-  propName: string;
-  options: Set<Option>;
+interface SearchBoxProps<T> {
+  title: string;
+  options: Set<Option<T>>;
   isMulti: boolean;
+  isClearable: boolean;
 
-  selected: Option | Option[] | null;
+  selected: Option<T> | Option<T>[] | null;
   onChange(v: any): void;
   onSearch?(): void;
 }
 
-export default function SearchBox({
-  propName,
+export default function SearchBox<T>({
+  title,
   options,
   isMulti,
+  isClearable,
   onChange,
   onSearch,
   selected,
-}: SearchBoxProps) {
+}: SearchBoxProps<T>) {
   return (
     <Box>
-      <Title>Search by {propName}</Title>
+      <Title>{title}</Title>
       <InputContainer>
         <SelectContainer>
           <VirtualizedSelect
@@ -69,9 +71,10 @@ export default function SearchBox({
             options={Array.from(options)}
             onChange={onChange}
             value={selected === null ? [] : selected}
+            clearable={isClearable}
           />
         </SelectContainer>
-        {!isMulti && (
+        {onSearch && (
           <SearchButton onClick={onSearch}>
             <FaSearch />
           </SearchButton>

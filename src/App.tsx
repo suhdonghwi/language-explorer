@@ -10,6 +10,7 @@ import { WebGLRenderer } from "sigma";
 import { DirectedGraph } from "graphology";
 
 import Layout from "./types/Layout";
+import Option from "./types/Option";
 
 import randomLayout from "graphology-layout/random";
 import forceAtlas2 from "graphology-layout-forceatlas2";
@@ -25,7 +26,10 @@ function App() {
   const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
 
   const [lang, setLang] = useState<Language | null>(null);
-  const [layout, setLayout] = useState<Layout>("timeUD");
+  const [layout, setLayout] = useState<Option<Layout>>({
+    label: "Timeline (Left-right)",
+    value: "timeLR",
+  });
 
   const defaultEdgeColor = "rgba(100, 100, 100, 0.5)";
   const defaultNodeColor = "rgba(100, 100, 100)";
@@ -63,7 +67,7 @@ function App() {
       );
     }
 
-    if (layout === "web") {
+    if (layout.value === "web") {
       randomLayout.assign(graph);
       forceAtlas2.assign(graph, {
         iterations: 100,
@@ -97,7 +101,7 @@ function App() {
         );
 
         sorted.forEach((node, i) => {
-          if (layout === "timeLR") {
+          if (layout.value === "timeLR") {
             const x = parseInt(year),
               y = i % 2 === 0 ? i / 2 : -(i + 1) / 2;
             graph.setNodeAttribute(node, "x", x);
@@ -255,6 +259,8 @@ function App() {
         onBack={() => setLang(null)}
         onSearch={onSearch}
         onHighlight={onHighlight}
+        layout={layout}
+        onChangeLayout={(v) => setLayout(v)}
       />
     </div>
   );

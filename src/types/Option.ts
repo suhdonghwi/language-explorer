@@ -1,4 +1,4 @@
-export default interface Option {
-  value: string;
+export default interface Option<T> {
+  value: T;
   label: string;
 }
